@@ -64,6 +64,12 @@ span {
 	background-color: #a9e5bb;
 	font-size: 25px;
 	font-family: Monaco, sans-serif;
+	cursor: pointer;
+}
+
+.buttons:active {
+	box-shadow: 0 5px #666;
+	transform: translateY(4px);
 }
 
 .C-button {
@@ -79,6 +85,7 @@ span {
 .equal {
 	grid-area: equal;
 	padding-bottom: 5px;
+	background-color: #e06c54;
 }
 
 .operator {
