@@ -1,2 +1,2 @@
-Calculator Project by Chris Robinson/
-Hope you enjoy :D
+Calculator Project using HTML, CSS, and JavaScript\
+Hope you enjoy!

@@ -10,6 +10,7 @@ let savedVal = document.querySelector(".savedValue");
 const backIcon = document.querySelector(".back-icon");
 const icons = document.querySelectorAll(".icon");
 let operatorChosen;
+window.addEventListener("keydown", keyBoard);
 
 function add(num1, num2) {
 	return num1 + num2;
@@ -136,7 +137,7 @@ function equalButton() {
 	};
 }
 
-function clearButton() {
+function clearButtonClick() {
 	clear.onclick = function () {
 		savedVal.innerText = "";
 		currentVal.innerText = "";
@@ -148,7 +149,7 @@ function clearButton() {
 	};
 }
 
-function backSpaceButton() {
+function backSpaceButtonClick() {
 	back.onclick = function () {
 		currentVal.innerText = currentVal.innerText.slice(0, -1);
 		checkDecimal();
@@ -255,7 +256,117 @@ function enableOperators() {
 	});
 }
 
+function clearButtonCode() {
+	savedVal.innerText = "";
+	currentVal.innerText = "";
+	decimal.style.opacity = "1";
+	decimal.style.cursor = "pointer";
+	decimal.disabled = false;
+	unlockInput();
+	enableAllButtons();
+}
+
+function backSpaceButtonCode() {
+	currentVal.innerText = currentVal.innerText.slice(0, -1);
+	checkDecimal();
+}
+
+function keyBoard(e) {
+	if (currentVal.innerText.length < 10) {
+		if (e.key >= 0 && e.key <= 9) currentVal.innerText += e.key;
+		if (e.key === ".") {
+			currentVal.innerText += e.key;
+			checkDecimal();
+		}
+	}
+	if (e.key === "=" || e.key === "Enter") {
+		if (savedVal.innerText != "" && currentVal.innerText != "") {
+			compute(operatorChosen);
+			lockInput();
+			return;
+		}
+	}
+	if (e.key === "Backspace") backSpaceButtonCode();
+	if (e.key === "c") clearButtonCode();
+	if (e.key === "+") {
+		if (savedVal.innerText != "" && currentVal.innerText != "") {
+			compute(operatorChosen);
+			if (currentVal.innerText != "Noob") {
+				checkDecimal();
+				operatorChosen = "add";
+				savedVal.innerText = currentVal.innerText;
+				currentVal.innerText = "";
+				checkDecimal();
+			}
+		} else {
+			unlockInput();
+			checkDecimal();
+			operatorChosen = "add";
+			getSecondVal();
+			checkDecimal();
+			currentVal.innerText = currentVal.innerText;
+		}
+	}
+	if (e.key === "-") {
+		if (savedVal.innerText != "" && currentVal.innerText != "") {
+			compute(operatorChosen);
+			if (currentVal.innerText != "Noob") {
+				checkDecimal();
+				operatorChosen = "subtract";
+				savedVal.innerText = currentVal.innerText;
+				currentVal.innerText = "";
+				checkDecimal();
+			}
+		} else {
+			unlockInput();
+			checkDecimal();
+			operatorChosen = "subtract";
+			getSecondVal();
+			checkDecimal();
+			currentVal.innerText = currentVal.innerText;
+		}
+	}
+	if (e.key === "*") {
+		if (savedVal.innerText != "" && currentVal.innerText != "") {
+			compute(operatorChosen);
+			if (currentVal.innerText != "Noob") {
+				checkDecimal();
+				operatorChosen = "multiply";
+				savedVal.innerText = currentVal.innerText;
+				currentVal.innerText = "";
+				checkDecimal();
+			}
+		} else {
+			unlockInput();
+			checkDecimal();
+			operatorChosen = "multiply";
+			getSecondVal();
+			checkDecimal();
+			currentVal.innerText = currentVal.innerText;
+		}
+	}
+	if (e.key === "/") {
+		if (savedVal.innerText != "" && currentVal.innerText != "") {
+			compute(operatorChosen);
+			if (currentVal.innerText != "Noob") {
+				checkDecimal();
+				operatorChosen = "divide";
+				savedVal.innerText = currentVal.innerText;
+				currentVal.innerText = "";
+				checkDecimal();
+			}
+		} else {
+			unlockInput();
+			checkDecimal();
+			operatorChosen = "divide";
+			getSecondVal();
+			checkDecimal();
+			currentVal.innerText = currentVal.innerText;
+		}
+	}
+}
+
 userInput();
 equalButton();
-clearButton();
-backSpaceButton();
+clearButtonClick();
+backSpaceButtonClick();
