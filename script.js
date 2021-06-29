@@ -1,3 +1,16 @@
+const button = document.querySelectorAll(".buttons");
+const number = document.querySelectorAll(".number");
+const operator = document.querySelectorAll(".operator");
+const equal = document.querySelector(".equal");
+const clear = document.querySelector(".C-button");
+const back = document.querySelector(".back");
+const decimal = document.querySelector(".decimal");
+let currentVal = document.querySelector(".currentValue");
+let savedVal = document.querySelector(".savedValue");
+const backIcon = document.querySelector(".back-icon");
+const icons = document.querySelectorAll(".icon");
+let operatorChosen;
+
 function add(num1, num2) {
 	return num1 + num2;
 }
@@ -31,61 +44,218 @@ function operate(operator, num1, num2) {
 	}
 }
 
-function buttonPress() {
-	const calculatorButton = document.querySelectorAll(".buttons");
-	let span = document.querySelector("span");
-	let firstValue;
-	let value = [];
-	let operator;
-	let sum = null;
-	calculatorButton.forEach((button) => {
-		button.addEventListener("click", (e) => {
-			if (e.target.classList.contains("number")) {
-				console.log("numba");
-				span.innerText += e.target.innerText;
+function clearSavedVal() {
+	savedVal.innerText = "";
+}
+
+function clearCurrentVal() {
+	currentVal.innerText = "";
+}
+
+function compute(op) {
+	if (op == "divide" && currentVal.innerText == "0") {
+		savedVal.innerText = "";
+		currentVal.innerText = "Noob";
+		disableAllButtons();
+		return;
+	}
+	currentVal.innerText =
+		Math.round(
+			operate(
+				op,
+				Number(savedVal.innerText),
+				Number(currentVal.innerText)
+			) * 1000000000
+		) / 1000000000;
+	checkSize();
+	clearSavedVal();
+}
+
+function userInput() {
+	checkDecimal();
+	number.forEach((numb) => {
+		numb.onclick = function () {
+			if (currentVal.innerText.length < 10) {
+				currentVal.innerText += numb.innerText;
+				disableOperators();
+				enableOperators();
+				checkDecimal();
 			}
-			if (e.target.classList.contains("operator")) {
-				console.log("smooth operata");
-			} else if (e.target.classList.contains("multiply")) {
-				operator = "multiply";
-			} else if (e.target.classList.contains("subtract")) {
-				operator = "subtract;";
-			} else if (e.target.classList.contains("add")) {
-				operator = "add";
+		};
+	});
+
+	operator.forEach((op) => {
+		op.onclick = function () {
+			if (savedVal.innerText != "" && currentVal.innerText != "") {
+				compute(operatorChosen);
+				if (currentVal.innerText != "Noob") {
+					checkDecimal();
+					operatorChosen = returnOperator(op);
+					savedVal.innerText = currentVal.innerText;
+					currentVal.innerText = "";
+					checkDecimal();
+				}
+			} else {
+				unlockInput();
+				checkDecimal();
+				operatorChosen = returnOperator(op);
+				getSecondVal();
+				checkDecimal();
+				currentVal.innerText = currentVal.innerText;
 			}
-			if (e.target.classList.contains("equal")) {
-			}
-			if (e.target.classList.contains("C-button")) {
-				console.log("we gon clear");
-			}
-			if (e.target.classList.contains("back")) {
-				console.log("back that thang up");
-			}
-		});
+		};
 	});
 }
 
-function pressedNumber() {
-	const numberButton = document.querySelectorAll(".number");
-	let span = document.querySelector("span");
-	let screenValue = [];
-	numberButton.forEach((number) => {
-		number.addEventListener("click", (e) => {
-			console.log(e.target.outerText);
-			screenValue.push(e.target.outerText);
-			span.innerText =
-				span.innerText + screenValue[screenValue.length - 1];
-			console.log(screenValue);
-		});
+function getSecondVal() {
+	savedVal.innerText = currentVal.innerText;
+	currentVal.innerText = "";
+}
+
+function returnOperator(op) {
+	if (op.classList.contains("divide")) {
+		return "divide";
+	}
+	if (op.classList.contains("multiply")) {
+		return "multiply";
+	}
+	if (op.classList.contains("subtract")) {
+		return "subtract";
+	}
+	if (op.classList.contains("add")) {
+		return "add";
+	}
+}
+
+function equalButton() {
+	equal.onclick = function () {
+		if (savedVal.innerText != "" && currentVal.innerText != "") {
+			compute(operatorChosen);
+			lockInput();
+		}
+	};
+}
+
+function clearButton() {
+	clear.onclick = function () {
+		savedVal.innerText = "";
+		currentVal.innerText = "";
+		decimal.style.opacity = "1";
+		decimal.style.cursor = "pointer";
+		decimal.disabled = false;
+		unlockInput();
+		enableAllButtons();
+	};
+}
+
+function backSpaceButton() {
+	back.onclick = function () {
+		currentVal.innerText = currentVal.innerText.slice(0, -1);
+		checkDecimal();
+	};
+}
+
+function checkSize() {
+	if (currentVal.innerText.length > 10) {
+		currentVal.innerText = Number(currentVal.innerText).toExponential(2);
+	}
+}
+
+function checkDecimal() {
+	if (
+		currentVal.innerText.includes(".") ||
+		currentVal.innerText.includes("Noob") ||
+		savedVal.innerText.includes("Noob")
+	) {
+		decimal.style.opacity = "0.7";
+		decimal.style.cursor = "not-allowed";
+		decimal.disabled = true;
+	} else {
+		decimal.style.opacity = "1";
+		decimal.style.cursor = "pointer";
+		decimal.disabled = false;
+	}
+}
+
+function lockInput() {
+	number.forEach((numb) => {
+		numb.style.opacity = "0.7";
+		numb.style.cursor = "not-allowed";
+		numb.disabled = true;
+	});
+	back.disabled = true;
+	back.style.opacity = "0.7";
+	back.style.cursor = "not-allowed";
+	backIcon.style.opacity = "0.3";
+}
+
+function unlockInput() {
+	number.forEach((numb) => {
+		numb.style.opacity = "1";
+		numb.style.cursor = "pointer";
+		numb.disabled = false;
+	});
+	back.disabled = false;
+	back.style.opacity = "1";
+	back.style.cursor = "pointer";
+	backIcon.style.opacity = "1";
+}
+
+function disableAllButtons() {
+	button.forEach((btn) => {
+		btn.disabled = true;
+		btn.style.opacity = "0.7";
+		btn.style.cursor = "not-allowed";
+	});
+	icons.forEach((icon) => {
+		icon.style.opacity = "0.3";
+	});
+	clear.style.cursor = "pointer";
+	clear.style.opacity = "1";
+	clear.disabled = false;
+}
+
+function enableAllButtons() {
+	button.forEach((btn) => {
+		btn.disabled = false;
+		btn.style.opacity = "1";
+		btn.style.cursor = "pointer";
+	});
+	icons.forEach((icon) => {
+		icon.style.opacity = "1";
+	});
+	clear.style.cursor = "pointer";
+	clear.style.opacity = "1";
+	clear.disabled = false;
+}
+
+function disableOperators() {
+	operator.forEach((op) => {
+		if (currentVal.innerText == ".") {
+			op.disabled = true;
+			op.style.opacity = "0.7";
+			op.style.cursor = "not-allowed";
+		}
+	});
+	icons.forEach((icon) => {
+		icon.style.opacity = "0.3";
 	});
 }
 
-function pressedOperator() {
-	const operator = document.querySelectorAll(".operator");
-	let span = document.querySelector("span");
-	operator.forEach((operation) => {
-		operator.addEventListener("click", (e) => {});
+function enableOperators() {
+	operator.forEach((op) => {
+		if (currentVal.innerText != ".") {
+			op.disabled = false;
+			op.style.opacity = "1";
+			op.style.cursor = "pointer";
+		}
+	});
+	icons.forEach((icon) => {
+		icon.style.opacity = "1";
 	});
 }
 
-buttonPress();
+userInput();
+equalButton();
+clearButton();
+backSpaceButton();

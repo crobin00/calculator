@@ -37,11 +37,19 @@ body {
 	position: relative;
 }
 
-span {
+.currentValue {
 	position: absolute;
 	bottom: 0px;
 	right: 12px;
 	font-size: 45px;
+	font-family: Monaco, sans-serif;
+}
+
+.savedValue {
+	position: absolute;
+	top: 0px;
+	left: 12px;
+	font-size: 14px;
 	font-family: Monaco, sans-serif;
 }
 
